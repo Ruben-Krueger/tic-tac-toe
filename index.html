@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Tic-Tac-Toe</title>
-    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
     <link rel="stylesheet" href="main.css"/>
 </head>
@@ -15,88 +12,107 @@
 
     <div class="row">
         <div class="col">
-            <div id="game" class="centered"></div>
+            <h1 class="text-center">Tic-Tac-Toe</h1>
+            <canvas id="game" width="400" height="400"></canvas>
         </div>
     </div>
 </div>
 
 
-<script type="text/babel">
+<script type="text/javascript">
 
- function update() {
+    // TODO: Fix outline bug
 
- }
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
 
- class Alert extends React.Component {
+    const ROW_LENGTH = 3;
+    const COL_LENGTH = 3;
+    const NUM_SQUARES = ROW_LENGTH * COL_LENGTH;
+    const FIRST_PLAYER = "X";
 
-     render() {
-         return (
-             <h1>{this.props.message}</h1>
-         );
-     }
- }
+    class Square {
+
+        constructor(r, c) {
+            this.width = 100;
+            this.height = 100;
+            this.x = r * this.width;
+            this.y = c * this.height;
+            this.player = "";
+        }
+
+        render() {
+            ctx.rect(this.x, this.y, this.width, this.height);
+            ctx.strokeStyle="white";
+            ctx.lineWidth="6";
+            ctx.stroke();
+        }
+
+    }
+
+    class Board {
+
+        constructor() {
+            this.squares = [[]];
+
+            for(let i = 0; i < ROW_LENGTH; i ++) {
+
+                // Because of Javascript memory
+                this.squares.push([]);
+
+                for(let j = 0; j < COL_LENGTH; j ++) {
+                    console.log(`i: ${i}, j: ${j}`);
+                    console.log(this.squares);
+                    this.squares[i][j] = new Square(i,j);
+                }
+            }
+        }
+
+        render() {
+            for(let i = 0; i < ROW_LENGTH; i ++) {
+                for(let j = 0; j < COL_LENGTH; j ++) {
+                    this.squares[i][j].render();
+                }
+            }
+        }
+
+        checkWinner() {
+
+        }
+
+    }
+
+    class Game {
+
+        // board = [[]];
+
+        update() {
+
+        }
+
+        checkWinner() {
+            this.board.checkWinner();
+        }
+
+        constructor() {
+            this.board = new Board();
+            this.nextPlayer = FIRST_PLAYER;
+        }
+
+        render() {
+            this.board.render();
+        }
+
+    }
+
+    game = new Game();
 
 
- class Board extends React.Component{
-
-     render() {
-         return (
-             <div>
-                 <div>
-                     <Square index = "0"/><Square index = "1"/><Square index = "2"/>
-                 </div>
-                 <div>
-                     <Square index = "3"/><Square index = "4"/><Square index = "5"/>
-                 </div>
-                 <div>
-                     <Square index = "6"/><Square index = "7"/><Square index = "8"/>
-                 </div>
-             </div>
-         );
-     }
- }
-
-
-
- class Square extends React.Component {
-
-     state = {
-         player: ""
-     };
-
-
-
-     render() {
-         return (
-             <button className="btn btn-light btn-lg" onClick={update}>{this.state.player}</button>
-     );
-     }
- }
-
- class Game extends React.Component {
-
-     nextPlayer = "0";
-
-     getNextPlayer() {
-         return this.nextPlayer;
-     }
-
-
-     render() {
-         return (
-             <div>
-                 <h1>Tic-Tac-Toe</h1>
-                 <Alert/>
-                <Board/>
-             </div>
-         );
-     }
- }
-
- ReactDOM.render( <Game/>, document.getElementById('game'));
+    setInterval(game.render(), 100);
 
 
 </script>
+
 
 </body>
 </html>
