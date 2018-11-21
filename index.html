@@ -3,10 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <title>Tic-Tac-Toe</title>
-    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="main.css"/>
 </head>
 <body>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col">
+            <div id="game" class="centered"></div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/babel">
+
+ function update() {
+
+ }
+
+ class Alert extends React.Component {
+
+     render() {
+         return (
+             <h1>{this.props.message}</h1>
+         );
+     }
+ }
+
+
+ class Board extends React.Component{
+
+     render() {
+         return (
+             <div>
+                 <div>
+                     <Square index = "0"/><Square index = "1"/><Square index = "2"/>
+                 </div>
+                 <div>
+                     <Square index = "3"/><Square index = "4"/><Square index = "5"/>
+                 </div>
+                 <div>
+                     <Square index = "6"/><Square index = "7"/><Square index = "8"/>
+                 </div>
+             </div>
+         );
+     }
+ }
+
+
+
+ class Square extends React.Component {
+
+     state = {
+         player: ""
+     };
+
+
+
+     render() {
+         return (
+             <button className="btn btn-light btn-lg" onClick={update}>{this.state.player}</button>
+     );
+     }
+ }
+
+ class Game extends React.Component {
+
+     nextPlayer = "0";
+
+     getNextPlayer() {
+         return this.nextPlayer;
+     }
+
+
+     render() {
+         return (
+             <div>
+                 <h1>Tic-Tac-Toe</h1>
+                 <Alert/>
+                <Board/>
+             </div>
+         );
+     }
+ }
+
+ ReactDOM.render( <Game/>, document.getElementById('game'));
+
+
+</script>
 
 </body>
 </html>
