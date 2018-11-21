@@ -13,6 +13,7 @@
     <div class="row">
         <div class="col">
             <h1 class="text-center">Tic-Tac-Toe</h1>
+            <h1 class="text-center" id="notification"></h1>
             <canvas id="game" width="400" height="400"></canvas>
         </div>
     </div>
@@ -30,10 +31,11 @@
     const COL_LENGTH = 3;
     const PLAYER_ONE = "X";
     const PLAYER_TWO = "O";
+    const WINNING_NUM = 3;
 
+
+    const VERTICAL_OFFSET = 20;
     const FONT = "60px Arial";
-
-
 
     const SQUARE_SIZE = 100;
 
@@ -56,7 +58,7 @@
 
         drawPlayer(player) {
             ctx.font = FONT;
-            ctx.strokeText(player, this.x + SQUARE_SIZE / 4, this.y +SQUARE_SIZE / 2);
+            ctx.strokeText(player, this.x + SQUARE_SIZE / 4, this.y +SQUARE_SIZE / 2 + VERTICAL_OFFSET);
             this.player = player;
         }
 
@@ -69,6 +71,7 @@
 
             for(let i = 0; i < ROW_LENGTH; i ++) {
 
+                // Because of Javascript memory bug
                 this.squares.push([]);
 
                 for(let j = 0; j < COL_LENGTH; j ++) {
@@ -80,26 +83,23 @@
         }
 
         update(e) {
-            console.log('click');
-
             const rect = canvas.getBoundingClientRect();
             const canvasX = e.clientX - rect.left;
             const canvasY = e.clientY - rect.top;
 
             const row = Math.floor(canvasX / SQUARE_SIZE);
             const col = Math.floor(canvasY / SQUARE_SIZE);
-            console.log(`row: ${row}, col: ${col}`);
-            console.log(`c.x: ${canvasX}, c.y: ${canvasY}`);
 
-            if(game.board.squares[row][col].player !== "") return;
+            if(game.board.squares[row][col].player !== "" || game.gameOver) return;
 
-            game.board.squares[row][col].drawPlayer(game.nextPlayer);
+            game.board.squares[row][col].drawPlayer(game.currentPlayer);
 
-
-            //this.squares[row][col].drawPlayer(game.nextPlayer);
+            Board.checkWinner();
 
             // switch who's turn it is next
-            game.nextPlayer = game.nextPlayer === PLAYER_ONE ? PLAYER_TWO : PLAYER_ONE;
+            game.currentPlayer = game.currentPlayer === PLAYER_ONE ? PLAYER_TWO : PLAYER_ONE;
+
+            game.notify();
 
         }
 
@@ -111,10 +111,42 @@
             }
         }
 
-        checkWinner() {
+
+        static checkWinner() {
+            console.log('checking winner');
+            const winningCombos = [
+                [[0,0], [0,1], [0,2]],
+                [[1,0], [1,1], [1,2]],
+                [[2,0], [2,1], [2,2]],
+                [[0,0], [1,0], [2,0]],
+                [[0,1], [1,1], [1,2]],
+                [[0,2], [1,2], [2,2]],
+
+                [[0,0], [1,1], [2,2]],
+                [[0,2], [1,1], [2,0]],
+
+            ];
+
+            for(let i = 0; i < winningCombos.length; i++) {
+                var inRow = 0;
+
+                for(let j = 0; j < winningCombos[i].length; j++) {
+                    const row = winningCombos[i][j][0];
+                    const col = winningCombos[i][j][1];
+
+                    if(game.board.squares[row][col].player === game.currentPlayer) {
+                        inRow++;
+                    }
+
+                    if(inRow === WINNING_NUM) {
+                        console.log('three in a row');
+                        Game.win();
+                    }
+                }
+
+            }
 
         }
-
     }
 
     class Game {
@@ -122,23 +154,33 @@
 
         constructor() {
             this.board = new Board();
-            this.nextPlayer = PLAYER_ONE;
+            this.currentPlayer = PLAYER_ONE;
+            this.gameOver = false;
+        }
+
+        notify() {
+
+            if(this.gameOver) {
+
+            }
+            else {
+                document.getElementById('notification').innerText = `It is ${game.currentPlayer}'s turn`;
+            }
         }
 
         render() {
             this.board.render();
         }
 
-
-
-
-        checkWinner() {
-            this.board.checkWinner();
-        }
-
         reset() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             this.board = new Board();
+        }
+
+        static win() {
+            console.log('winning');
+            game.gameOver = true;
+            document.getElementById('notification').innerText = `Player ${game.currentPlayer} won!`;
         }
 
     }
