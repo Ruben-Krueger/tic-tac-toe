@@ -24,20 +24,26 @@
     // TODO: Fix outline bug
 
     const canvas = document.getElementById("game");
-    const ctx = canvas.getContext("2d");
+    var ctx = canvas.getContext("2d");
 
     const ROW_LENGTH = 3;
     const COL_LENGTH = 3;
-    const NUM_SQUARES = ROW_LENGTH * COL_LENGTH;
-    const FIRST_PLAYER = "X";
+    const PLAYER_ONE = "X";
+    const PLAYER_TWO = "O";
+
+    const FONT = "60px Arial";
+
+
+
+    const SQUARE_SIZE = 100;
 
     class Square {
 
         constructor(r, c) {
             this.width = 100;
             this.height = 100;
-            this.x = r * this.width;
-            this.y = c * this.height;
+            this.x = r * SQUARE_SIZE;
+            this.y = c * SQUARE_SIZE;
             this.player = "";
         }
 
@@ -46,6 +52,12 @@
             ctx.strokeStyle="white";
             ctx.lineWidth="6";
             ctx.stroke();
+        }
+
+        drawPlayer(player) {
+            ctx.font = FONT;
+            ctx.strokeText(player, this.x + SQUARE_SIZE / 4, this.y +SQUARE_SIZE / 2);
+            this.player = player;
         }
 
     }
@@ -57,22 +69,45 @@
 
             for(let i = 0; i < ROW_LENGTH; i ++) {
 
-                // Because of Javascript memory
                 this.squares.push([]);
 
                 for(let j = 0; j < COL_LENGTH; j ++) {
-                    console.log(`i: ${i}, j: ${j}`);
-                    console.log(this.squares);
                     this.squares[i][j] = new Square(i,j);
                 }
             }
+
+            canvas.addEventListener("click", this.update);
+        }
+
+        update(e) {
+            console.log('click');
+
+            const rect = canvas.getBoundingClientRect();
+            const canvasX = e.clientX - rect.left;
+            const canvasY = e.clientY - rect.top;
+
+            const row = Math.floor(canvasX / SQUARE_SIZE);
+            const col = Math.floor(canvasY / SQUARE_SIZE);
+            console.log(`row: ${row}, col: ${col}`);
+            console.log(`c.x: ${canvasX}, c.y: ${canvasY}`);
+
+            if(game.board.squares[row][col].player !== "") return;
+
+            game.board.squares[row][col].drawPlayer(game.nextPlayer);
+
+
+            //this.squares[row][col].drawPlayer(game.nextPlayer);
+
+            // switch who's turn it is next
+            game.nextPlayer = game.nextPlayer === PLAYER_ONE ? PLAYER_TWO : PLAYER_ONE;
+
         }
 
         render() {
             for(let i = 0; i < ROW_LENGTH; i ++) {
-                for(let j = 0; j < COL_LENGTH; j ++) {
-                    this.squares[i][j].render();
-                }
+               for(let j = 0; j < COL_LENGTH; j ++) {
+                   this.squares[i][j].render();
+               }
             }
         }
 
@@ -84,23 +119,26 @@
 
     class Game {
 
-        // board = [[]];
 
-        update() {
-
+        constructor() {
+            this.board = new Board();
+            this.nextPlayer = PLAYER_ONE;
         }
+
+        render() {
+            this.board.render();
+        }
+
+
+
 
         checkWinner() {
             this.board.checkWinner();
         }
 
-        constructor() {
+        reset() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             this.board = new Board();
-            this.nextPlayer = FIRST_PLAYER;
-        }
-
-        render() {
-            this.board.render();
         }
 
     }
