@@ -75,6 +75,8 @@
 
     class Board {
 
+        turns = 0;
+
         constructor() {
             this.squares = [[]];
 
@@ -110,6 +112,8 @@
 
             game.notify();
 
+            turns ++;
+
         }
 
         render() {
@@ -123,8 +127,6 @@
 
         static checkWinner() {
 
-            console.log('checking winner');
-            console.log('current player ' + game.currentPlayer);
             const winningCombos = [
 
                 // first row horizontal
