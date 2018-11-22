@@ -212,6 +212,7 @@
             for(let j = 0; j < COL_LENGTH; j++) {
                 game.board.squares[i][j].player = "";
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                game.board.squares[i][j].render();
             }
         }
 
@@ -220,7 +221,6 @@
 
 
     setInterval(game.render(), 100);
-
 
 </script>
 
