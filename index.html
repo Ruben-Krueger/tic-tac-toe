@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Tic-Tac-Toe</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" type="text/javascript"></script>
+
     <link rel="stylesheet" href="main.css"/>
 </head>
 <body>
@@ -13,9 +16,15 @@
     <div class="row">
         <div class="col">
             <h1 class="text-center">Tic-Tac-Toe</h1>
-            <h1 class="text-center" id="notification"></h1>
             <canvas id="game" width="400" height="400"></canvas>
+            <h1 class="text-center" id="notification">It is X's turn</h1>
+
+            <div class="text-center">
+                <button type="button" class="btn btn-light" onclick="newGame()">New Game</button>
+            </div>
         </div>
+        <!--<div class="col">-->
+        <!--</div>-->
     </div>
 </div>
 
@@ -113,15 +122,30 @@
 
 
         static checkWinner() {
+
             console.log('checking winner');
+            console.log('current player ' + game.currentPlayer);
             const winningCombos = [
+
+                // first row horizontal
                 [[0,0], [0,1], [0,2]],
+
+                // second row horizontal
                 [[1,0], [1,1], [1,2]],
+
+                // third row horizontal
                 [[2,0], [2,1], [2,2]],
+
+                // first column vertical
                 [[0,0], [1,0], [2,0]],
-                [[0,1], [1,1], [1,2]],
+
+                // second column vertical
+                [[0,1], [1,1], [2,1]],
+
+                // third column vertical
                 [[0,2], [1,2], [2,2]],
 
+                // diagonals
                 [[0,0], [1,1], [2,2]],
                 [[0,2], [1,1], [2,0]],
 
@@ -134,12 +158,15 @@
                     const row = winningCombos[i][j][0];
                     const col = winningCombos[i][j][1];
 
+                    // console.log(`game.board.squares[row][col].player: ${game.board.squares[row][col].player}`);
+
                     if(game.board.squares[row][col].player === game.currentPlayer) {
                         inRow++;
                     }
 
                     if(inRow === WINNING_NUM) {
                         console.log('three in a row');
+                        console.log(`${game.currentPlayer} won!`);
                         Game.win();
                     }
                 }
@@ -159,22 +186,14 @@
         }
 
         notify() {
-
-            if(this.gameOver) {
-
-            }
-            else {
+            if(!this.gameOver) {
                 document.getElementById('notification').innerText = `It is ${game.currentPlayer}'s turn`;
+
             }
         }
 
         render() {
             this.board.render();
-        }
-
-        reset() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            this.board = new Board();
         }
 
         static win() {
@@ -185,7 +204,19 @@
 
     }
 
-    game = new Game();
+    var game = new Game();
+
+    function newGame() {
+
+        for(let i = 0; i < ROW_LENGTH; i++) {
+            for(let j = 0; j < COL_LENGTH; j++) {
+                game.board.squares[i][j].player = "";
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        document.getElementById('notification').innerText = "It is X's turn";
+    }
 
 
     setInterval(game.render(), 100);
