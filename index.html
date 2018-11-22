@@ -48,6 +48,8 @@
 
     const SQUARE_SIZE = 100;
 
+    var turns = 0;
+
     class Square {
 
         constructor(r, c) {
@@ -75,8 +77,6 @@
 
     class Board {
 
-        turns = 0;
-
         constructor() {
             this.squares = [[]];
 
@@ -94,6 +94,7 @@
         }
 
         update(e) {
+
             const rect = canvas.getBoundingClientRect();
             const canvasX = e.clientX - rect.left;
             const canvasY = e.clientY - rect.top;
@@ -105,14 +106,20 @@
 
             game.board.squares[row][col].drawPlayer(game.currentPlayer);
 
+            turns ++;
+
+            if(turns >= 9) {
+                console.log('cats game');
+                document.getElementById('notification').innerText = "Cat's game!";
+                return;
+            }
+
             Board.checkWinner();
 
             // switch who's turn it is next
             game.currentPlayer = game.currentPlayer === PLAYER_ONE ? PLAYER_TWO : PLAYER_ONE;
 
             game.notify();
-
-            turns ++;
 
         }
 
@@ -220,6 +227,8 @@
 
         game.gameOver = false;
         game.currentPlayer = PLAYER_ONE;
+
+        turns = 0;
 
         document.getElementById('notification').innerText = "It is X's turn";
     }
